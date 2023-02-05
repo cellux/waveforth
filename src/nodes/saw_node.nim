@@ -19,5 +19,5 @@ method process*(self: SawNode, vm: var VM) =
 
 proc doSaw*(vm: var VM) =
   let freq = AudioNode(vm.pop)
-  let phase: float = FloatNode(vm.getNode(":phase", 0))
+  let phase: float = FloatNode(vm.getVar("phase", 0))
   vm.push(SawNode(freq: freq, phase: phase))

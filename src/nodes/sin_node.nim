@@ -19,5 +19,5 @@ method process*(self: SinNode, vm: var VM) =
 
 proc doSin*(vm: var VM) =
   let freq = AudioNode(vm.pop)
-  let phase: float = FloatNode(vm.getNode(":phase", 0))
+  let phase: float = FloatNode(vm.getVar("phase", 0))
   vm.push(SinNode(freq: freq, phase: phase))

@@ -24,6 +24,6 @@ method process*(self: PulseNode, vm: var VM) =
 
 proc doPulse*(vm: var VM) =
   let freq = AudioNode(vm.pop())
-  let width = AudioNode(vm.getNode(":width", 0.5))
-  let phase: float = FloatNode(vm.getNode(":phase", 0))
+  let width = AudioNode(vm.getVar("width", 0.5))
+  let phase: float = FloatNode(vm.getVar("phase", 0))
   vm.push(PulseNode(freq: freq, width: width, phase: phase))

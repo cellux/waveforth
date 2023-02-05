@@ -1,6 +1,5 @@
 import std/tables
 import std/strutils
-import std/options
 
 import types
 
@@ -13,6 +12,7 @@ type
     input: seq[string]
     inputIndex: int
     words: Table[string, VMObj]
+    vars: Table[string, VMObj]
     stack: seq[VMObj]
     sampleRate*: float
     tick: int
@@ -21,11 +21,23 @@ proc push*(self: var VM, value: VMObj) =
   self.stack.add(value)
 
 proc pop*(self: var VM): VMObj =
-  result = self.stack.pop()
+  self.stack.pop()
 
 proc top*(self: var VM): VMObj =
   let length = len(self.stack)
-  result = self.stack[length-1]
+  self.stack[length-1]
+
+func getVar*(self: var VM, name: string): VMObj =
+  self.vars[name]
+
+func getVar*[T](self: var VM, name: string, default: T): VMObj =
+  try:
+    return self.getVar(name)
+  except KeyError:
+    return VMObj(default)
+
+func setVar*(self: var VM, name: string, value: VMObj) =
+  self.vars[name] = value
 
 import nodes/audio_node
 
@@ -33,20 +45,17 @@ proc next*(vm: var VM, node: AudioNode): Frame =
   if node.tick == vm.tick:
     node.process(vm)
     inc(node.tick)
-  result = node.frame
-
-func getNode*[T](self: var VM, name: string, default: T): AudioNode =
-  try:
-    let value = self.words[name]
-    return makeNode(value)
-  except KeyError:
-    return makeNode(default)
+  node.frame
 
 import nodes/float_node
 
 proc processWord*(self: var VM, word: string) =
-  if word[0] == ':':
-    self.words[word] = self.pop()
+  if word.startsWith(':'):
+    let name = word.substr(1)
+    self.setVar(name, self.pop)
+  elif word.endsWith(':'):
+    let name = word.substr(0, word.high)
+    self.push(self.getVar(name))
   else:
     try:
       let obj = self.words[word]
@@ -57,24 +66,19 @@ proc processWord*(self: var VM, word: string) =
     except KeyError:
       try:
         let x = word.parseFloat
-        self.push(makeNode(x))
+        self.push(VMObj(x))
       except ValueError:
         raise newException(ParseError, word)
 
-proc nextWord*(self: var VM): Option[string] =
-  if self.inputIndex < len(self.input):
-    result = some(self.input[self.inputIndex])
-    inc(self.inputIndex)
+proc nextWord*(self: var VM): string =
+  result = self.input[self.inputIndex]
+  inc(self.inputIndex)
 
 proc processWords*(self: var VM, input: seq[string]) =
   self.input = input
   self.inputIndex = 0
-  while true:
-    let word = self.nextWord()
-    if word.isSome:
-      self.processWord(word.get())
-    else:
-      break
+  while self.inputIndex < len(self.input):
+    self.processWord(self.nextWord)
 
 import sample_buffer
 
@@ -92,10 +96,10 @@ proc renderSamples*(self: var VM): SampleBuffer =
       samples[sampleIndex] = frame[ch]
       inc(sampleIndex)
     inc(self.tick)
-  result = SampleBuffer(nchannels: nchannels,
-                        nframes: nframes,
-                        sampleRate: int(self.sampleRate),
-                        samples: samples)
+  SampleBuffer(nchannels: nchannels,
+               nframes: nframes,
+               sampleRate: int(self.sampleRate),
+               samples: samples)
 
-proc registerProc*(vm: var VM, word: string, vmProc: proc(vm: var VM)) =
+proc registerProc*(vm: var VM, word: string, vmProc: VMProc) =
   vm.words[word] = VMProcObj(vmProc: vmProc)

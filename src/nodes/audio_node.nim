@@ -9,7 +9,7 @@ type
 method nframes*(self: AudioNode): int {.base.} = 0
 
 method nchannels*(self: AudioNode): int {.base.} =
-  raise newException(Defect, "nchannels not implemented")
+  raise newException(NotImplementedError, "nchannels not implemented")
 
 method process*(self: AudioNode, vm: var VM) {.base.} =
-  raise newException(Defect, "process not implemented")
+  raise newException(NotImplementedError, "process not implemented")

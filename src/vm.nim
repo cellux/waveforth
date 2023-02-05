@@ -68,7 +68,7 @@ proc processWord*(self: var VM, word: string) =
         let x = word.parseFloat
         self.push(VMObj(x))
       except ValueError:
-        raise newException(ParseError, word)
+        raise newException(SyntaxError, "cannot understand: " & word)
 
 proc nextWord*(self: var VM): string =
   result = self.input[self.inputIndex]

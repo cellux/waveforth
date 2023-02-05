@@ -1,4 +1,5 @@
 import ../vm
+import ../types
 import audio_node
 
 type MulNode* = ref object of AudioNode
@@ -19,7 +20,7 @@ proc doMul*(vm: var VM) =
   var lhs = AudioNode(vm.pop)
   if rhs.nchannels != 1:
     if lhs.nchannels != 1:
-      raise newException(Defect, "* needs at least one mono operand")
+      raise newException(SyntaxError, "* needs at least one mono operand")
     else:
       swap(lhs, rhs)
   vm.push(MulNode(lhs: lhs, rhs: rhs))

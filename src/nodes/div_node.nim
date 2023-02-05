@@ -1,4 +1,5 @@
 import ../vm
+import ../types
 import audio_node
 
 type DivNode* = ref object of AudioNode
@@ -21,5 +22,5 @@ proc doDiv*(vm: var VM) =
   var rhs = AudioNode(vm.pop)
   var lhs = AudioNode(vm.pop)
   if rhs.nchannels != 1:
-    raise newException(Defect, "/ needs a mono operand on the right side")
+    raise newException(SyntaxError, "/ needs a mono operand on the right side")
   vm.push(DivNode(lhs: lhs, rhs: rhs))

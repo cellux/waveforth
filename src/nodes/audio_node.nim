@@ -13,3 +13,5 @@ method nchannels*(self: AudioNode): int {.base.} =
 
 method process*(self: AudioNode, vm: var VM) {.base.} =
   raise newException(NotImplementedError, "process not implemented")
+
+converter toAudioNode*(obj: VMObj): AudioNode = AudioNode(obj)

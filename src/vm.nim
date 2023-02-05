@@ -49,6 +49,12 @@ proc next*(vm: var VM, node: AudioNode): Frame =
 
 import nodes/float_node
 
+converter toObj*(value: float): VMObj = FloatNode(value: value)
+converter toFloat*(self: VMObj): float = FloatNode(self).value
+
+converter toObj*(value: int): VMObj = FloatNode(value: float(value))
+converter toInt*(self: VMObj): int = int(FloatNode(self).value)
+
 proc processWord*(self: var VM, word: string) =
   if word.startsWith(':'):
     let name = word.substr(1)

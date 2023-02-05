@@ -2,7 +2,6 @@ import math
 
 import ../vm
 import audio_node
-import float_node
 
 type SawNode* = ref object of AudioNode
   freq: AudioNode
@@ -18,6 +17,6 @@ method process*(self: SawNode, vm: var VM) =
   self.phase = self.phase mod 1.0
 
 proc doSaw*(vm: var VM) =
-  let freq = AudioNode(vm.pop)
-  let phase: float = FloatNode(vm.getVar("phase", 0))
+  let freq: AudioNode = vm.pop
+  let phase: float = vm.getVar("phase", 0)
   vm.push(SawNode(freq: freq, phase: phase))

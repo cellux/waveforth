@@ -8,6 +8,7 @@ import nodes/sin_node
 import nodes/saw_node
 import nodes/pulse_node
 import nodes/take_node
+import nodes/clamp_node
 
 proc registerNodes*(vm: var VM) =
   vm.registerProc("+", doAdd)
@@ -18,3 +19,4 @@ proc registerNodes*(vm: var VM) =
   vm.registerProc("saw", doSaw)
   vm.registerProc("pulse", doPulse)
   vm.registerProc("take", doTake)
+  vm.registerProc("clamp", doClamp)

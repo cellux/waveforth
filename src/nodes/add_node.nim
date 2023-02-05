@@ -29,8 +29,8 @@ method process*(self: AddNode, vm: var VM) =
       self.frame[i] = lhsFrame[i] + rhsFrame[i]
 
 proc doAdd*(vm: var VM) =
-  var rhs = AudioNode(vm.pop)
-  var lhs = AudioNode(vm.pop)
+  var rhs: AudioNode = vm.pop
+  var lhs: AudioNode = vm.pop
   if lhs.nchannels == 1 and rhs.nchannels == 2:
     swap(lhs, rhs)
   vm.push(AddNode(lhs: lhs, rhs: rhs))

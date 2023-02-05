@@ -1,6 +1,5 @@
 import ../vm
 import audio_node
-import float_node
 
 type TakeNode* = ref object of AudioNode
   nframes*: int
@@ -13,6 +12,6 @@ method process*(self: TakeNode, vm: var VM) =
   self.frame = vm.next(self.source)
 
 proc doTake*(vm: var VM) =
-  let nframes: int = FloatNode(vm.pop)
-  let source = AudioNode(vm.pop)
+  let nframes: int = vm.pop
+  let source: AudioNode = vm.pop
   vm.push(TakeNode(nframes: nframes, source: source))

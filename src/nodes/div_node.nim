@@ -19,8 +19,8 @@ method process*(self: DivNode, vm: var VM) =
       self.frame[i] = lhsFrame[i] / rhsFrame[0]
 
 proc doDiv*(vm: var VM) =
-  var rhs = AudioNode(vm.pop)
-  var lhs = AudioNode(vm.pop)
+  var rhs: AudioNode = vm.pop
+  var lhs: AudioNode = vm.pop
   if rhs.nchannels != 1:
     raise newException(SyntaxError, "/ needs a mono operand on the right side")
   vm.push(DivNode(lhs: lhs, rhs: rhs))

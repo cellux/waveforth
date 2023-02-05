@@ -1,6 +1,5 @@
 import ../vm
 import audio_node
-import float_node
 
 type LineNode* = ref object of AudioNode
   startValue: float
@@ -17,10 +16,10 @@ method process*(self: LineNode, vm: var VM) =
   self.value += self.increment
 
 proc doLine*(vm: var VM) =
-  let length: int = FloatNode(vm.pop)
+  let length: int = vm.pop
   assert length > 0
-  let endValue: float = FloatNode(vm.pop)
-  let startValue: float = FloatNode(vm.pop)
+  let endValue: float = vm.pop
+  let startValue: float = vm.pop
   let value = startValue
   let increment: float = (endValue - startValue) / float(length)
   vm.push(LineNode(startValue: startValue,

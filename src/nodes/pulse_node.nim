@@ -2,7 +2,6 @@ import math
 
 import ../vm
 import audio_node
-import float_node
 
 type PulseNode* = ref object of AudioNode
   freq: AudioNode
@@ -23,7 +22,7 @@ method process*(self: PulseNode, vm: var VM) =
   self.phase = self.phase mod 1.0
 
 proc doPulse*(vm: var VM) =
-  let freq = AudioNode(vm.pop())
-  let width = AudioNode(vm.getVar("width", 0.5))
-  let phase: float = FloatNode(vm.getVar("phase", 0))
+  let freq: AudioNode = vm.pop
+  let width: AudioNode = vm.getVar("width", 0.5)
+  let phase: float = vm.getVar("phase", 0)
   vm.push(PulseNode(freq: freq, width: width, phase: phase))

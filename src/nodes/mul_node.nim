@@ -16,8 +16,8 @@ method process*(self: MulNode, vm: var VM) =
     self.frame[i] = lhsFrame[i] * rhsFrame[0]
 
 proc doMul*(vm: var VM) =
-  var rhs = AudioNode(vm.pop)
-  var lhs = AudioNode(vm.pop)
+  var rhs: AudioNode = vm.pop
+  var lhs: AudioNode = vm.pop
   if rhs.nchannels != 1:
     if lhs.nchannels != 1:
       raise newException(SyntaxError, "* needs at least one mono operand")
